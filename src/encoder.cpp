@@ -3,7 +3,7 @@
 Encoder* Encoder::instance = nullptr; // Static members need to be defined outside of the class definition.
                                       // They can only be declared inside the class.
 
-Encoder::Encoder(uint8_t CLK_pin, uint8_t SW_pin = -1, TIM_TypeDef *timer, uint32_t timer_frequency)
+Encoder::Encoder(uint8_t CLK_pin, uint8_t SW_pin, uint32_t timer_frequency,  TIM_TypeDef *timer)
 {
     Encoder::instance = this;
 

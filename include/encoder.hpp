@@ -6,7 +6,7 @@
 class Encoder
 {
     public:
-        Encoder(uint8_t CLK_pin, uint8_t SW_pin = -1, TIM_TypeDef *timer = TIM2, uint32_t timer_frequency);
+        Encoder(uint8_t CLK_pin, uint8_t SW_pin, uint32_t timer_frequency = 10,  TIM_TypeDef *timer = TIM2);
         // void update(); // Update ticks;
         ~Encoder();
         
