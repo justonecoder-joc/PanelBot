@@ -8,8 +8,11 @@ Encoder::Encoder(uint8_t CLK_pin, uint8_t SW_pin, uint32_t timer_frequency,  TIM
     Encoder::instance = this;
 
     CLK_pin_i = CLK_pin;
-    SW_pint_i = SW_pin;
+    SW_pin_i = SW_pin;
     timer_f = timer_frequency;
+
+    pinMode(CLK_pin_i, INPUT_PULLUP);
+    pinMode(SW_pin_i, INPUT_PULLUP);
 
     interval_timer = new HardwareTimer(timer); // The timer that we will use for rpm calculation intervals.
 
@@ -37,17 +40,25 @@ void Encoder::handleTimerISR()
 // Static ISR function called on falling edge or CLK_pin_i
 void Encoder::FallingEdgeISR()
 {
+    // noInterrupts();
     if (Encoder::instance)
     {
         Encoder::instance->handleFallingEdge();  // Delegate to the instance's method
     }
+    // interrupts();
 }
 
 // Non-static function to handle the falling edge event
 void Encoder::handleFallingEdge()
 {
-    // Increment ticks on the falling edge
-    this->ticks++;
+    uint32_t timestamp = millis();
+    
+    if (timestamp - tick_timestamp > 50) // Ignore ticks for 50 ms
+    {
+        // Increment ticks on the falling edge
+        tick_timestamp = timestamp;
+        this->ticks++;
+    }
 }
 
 // void Encoder::update()

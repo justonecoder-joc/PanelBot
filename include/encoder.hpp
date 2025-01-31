@@ -26,8 +26,11 @@ class Encoder
         void handleFallingEdge();  // Non-static function for handling falling edge
 
         HardwareTimer *interval_timer;
-        uint32_t prev_ticks = 0;
+
+
         float timer_f;
+        uint32_t tick_timestamp = 0; // timestamp for debouncing ticks.
+        uint32_t prev_ticks = 0;
         uint8_t CLK_pin_i;
-        uint8_t SW_pint_i;
+        uint8_t SW_pin_i;
 };
