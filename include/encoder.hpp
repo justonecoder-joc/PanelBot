@@ -7,18 +7,18 @@ class Encoder
 {
     public:
         Encoder(uint8_t CLK_pin, uint8_t SW_pin, uint32_t timer_frequency = 10,  TIM_TypeDef *timer = TIM2);
-        // void update(); // Update ticks;
         ~Encoder();
         
         static Encoder *instance; // Needs to be public for definition/initialization in global scope.
         float rpm = 0;
+        float velocity = 0;
         uint32_t ticks = 0;
 
 
     private:
     // ISRs must be static or global, since it is a callback function trigerred by hardware.
     // However, being a static function means that it cannot access "instance variables" using "this" pointer.
-    // . But, to mitigate this, the instance member that needs to be accessed can be declared as static as well.
+    // But, to mitigate this, the instance member that needs to be accessed can be declared as static as well.
         static void TimerISR();
         void handleTimerISR(); // Update rpm.
 

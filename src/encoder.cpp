@@ -33,7 +33,8 @@ void Encoder::TimerISR()
 
 void Encoder::handleTimerISR()
 {
-    rpm = (float) (ticks - prev_ticks) * timer_f;
+    rpm = (float) (ticks - prev_ticks) * timer_f / 20.0f * 60; // 20 ticks = 1 revolution.
+    velocity = rpm / 60 * 2 * 3.142f * 0.0381f;
     prev_ticks = ticks;
 }
 
@@ -53,18 +54,13 @@ void Encoder::handleFallingEdge()
 {
     uint32_t timestamp = millis();
     
-    if (timestamp - tick_timestamp > 50) // Ignore ticks for 50 ms
+    if (timestamp - tick_timestamp > 2) // Ignore ticks for 2 ms
     {
         // Increment ticks on the falling edge
         tick_timestamp = timestamp;
         this->ticks++;
     }
 }
-
-// void Encoder::update()
-// {
-
-// }
 
 Encoder::~Encoder()
 {

@@ -13,7 +13,7 @@ HardwareSerial SerialCom(PA10, PA9);
 // MotorDriver motor1(PB6, PB7); //Left Pin, Right Pin
 // MotorDriver motor2(PB8, PB9); //Left Pin, Right Pin
 
-Encoder encoder(PB6, PB7, 1, TIM2);
+Encoder encoder(PB6, PB7, 2, TIM2); // A 2 Hz RPMS calculation interval produced the best results.
 
 void setup()
 {
@@ -36,6 +36,9 @@ void loop()
   
   SerialCom.print("RPM: ");
   SerialCom.println(encoder.rpm);
+
+  SerialCom.print("Velocity: ");
+  SerialCom.println(encoder.velocity);
 
   // SerialCom.print("Limit Switch State ");
   // SerialCom.println(limitSwitch.state);  
