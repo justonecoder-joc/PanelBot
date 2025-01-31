@@ -1,16 +1,17 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include <stdint.h>
-#include "proximity_sensor.hpp"
-#include "limit_switch.hpp"
-#include "motor_driver.hpp"
+// #include "proximity_sensor.hpp"
+// #include "limit_switch.hpp"
+// #include "motor_driver.hpp"
 
 HardwareSerial SerialCom(PA10, PA9);
 
-LimitSwitch limitSwitch(PB4);
-ProximitySensor proximitySensor(PB5);
-MotorDriver motor1(PB6, PB7); //Left Pin, Right Pin
-MotorDriver motor2(PB8, PB9); //Left Pin, Right Pin
+uint32_t clk_time = 0;
+// LimitSwitch limitSwitch(PB4);
+// ProximitySensor proximitySensor(PB5);
+// MotorDriver motor1(PB6, PB7); //Left Pin, Right Pin
+// MotorDriver motor2(PB8, PB9); //Left Pin, Right Pin
 
 void setup()
 {
@@ -19,21 +20,10 @@ void setup()
 
 void loop()
 {
-  limitSwitch.sense();
-  proximitySensor.sense();
+  // clk_time = pulseIn(PB6, LOW);
+  Serial.print("CLK (A) pulse duration (us):");
+  Serial.println(clk_time);
   
-  motor1.set_direction(Forward); // Forward == Left
-  motor1.set_speed(0.1);
-
-  motor2.set_direction(Backward); // Backward == Right
-  motor2.set_speed(0.7);
-
-
-  SerialCom.print("Limit Switch State ");
-  SerialCom.println(limitSwitch.state);  
-  
-  SerialCom.print("Proximity Sensor State ");
-  SerialCom.println(proximitySensor.state);  
 
   delay(500);
 }
