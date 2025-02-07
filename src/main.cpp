@@ -5,15 +5,19 @@
 #include "limit_switch.hpp"
 #include "motor_driver.hpp"
 #include "encoder.hpp"
+#include "PID.hpp"
 
 HardwareSerial SerialCom(PA10, PA9);
 
 // LimitSwitch limitSwitch(PB4);
 // ProximitySensor proximitySensor(PB5);
-// MotorDriver motor1(PB6, PB7); //Left Pin, Right Pin
-// MotorDriver motor2(PB8, PB9); //Left Pin, Right Pin
+MotorDriver motor1(PA2, PA3); //Left Pin, Right Pin
+MotorDriver motor2(PB8, PB9); //Left Pin, Right Pin
+Encoder encoder(PB6, PB7, 2, TIM3); // A 2 Hz RPMS calculation interval produced the best results.
 
-Encoder encoder(PB6, PB7, 2, TIM2); // A 2 Hz RPMS calculation interval produced the best results.
+float delta_time = 500e-3;
+PID_Controller pid_mob1(0.1f, 0.001f, 0.001f, 0.0f, 1.0f);
+PID_Controller pid_mob2(0.1f, 0.001f, 0.001f, 0.0f, 1.0f);
 
 void setup()
 {
@@ -22,14 +26,16 @@ void setup()
 
 void loop()
 {
+  
   // limitSwitch.sense();
   // proximitySensor.sense();
+  float mob1_speed = pid_mob1.calculate(0.1, encoder.velocity, delta_time);
+  float mob2_speed = pid_mob2.calculate(0.1, encoder.velocity, delta_time);
+  motor1.set_direction(Forward); // Forward == Left
+  motor1.set_speed(mob1_speed);
 
-  // motor1.set_direction(Forward); // Forward == Left
-  // motor1.set_speed(0.1);
-
-  // motor2.set_direction(Backward); // Backward == Right
-  // motor2.set_speed(0.7);
+  motor2.set_direction(Backward); // Backward == Right
+  motor2.set_speed(mob2_speed);
 
   SerialCom.print("Ticks: ");
   SerialCom.println(encoder.ticks);  

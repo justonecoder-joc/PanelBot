@@ -54,7 +54,7 @@ void Encoder::handleFallingEdge()
 {
     uint32_t timestamp = millis();
     
-    if (timestamp - tick_timestamp > 2) // Ignore ticks for 2 ms
+    if (timestamp - tick_timestamp > 10) // Ignore ticks for 10 ms. For debouncing.
     {
         // Increment ticks on the falling edge
         tick_timestamp = timestamp;
