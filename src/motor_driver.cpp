@@ -8,6 +8,11 @@ MotorDriver::MotorDriver(uint8_t pinL, uint8_t pinR)
 
     pinMode(pinL_i, OUTPUT);
     pinMode(pinR_i, OUTPUT);
+
+    speed_f = 0.0f;
+    direction_i = Forward;
+
+    this->set_speed(speed_f); // Motor is turned-off at the start.
 }
 
 void MotorDriver::set_speed(float speed)

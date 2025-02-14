@@ -40,11 +40,10 @@ uint32_t time_stamp = 0;
 void setup()
 {
   SerialCom.begin(9600);
+  brush_motor.set_direction(Forward); // Backward == Right
   mob_motor1.set_direction(Forward); // Forward == Left
-  mob_motor1.set_speed(0.5);
-  
   mob_motor2.set_direction(Backward); // Backward == Right
-  mob_motor2.set_speed(0.5);
+  
   time_stamp = millis();
 }
 

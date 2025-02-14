@@ -12,8 +12,8 @@ class MotorDriver
         void set_direction(Direction direction);
 
     private:
-        float speed_f = 0.0f;
-        Direction direction_i = Forward;
+        float speed_f;
+        Direction direction_i;
         uint8_t pinL_i;
         uint8_t pinR_i;
 };
