@@ -11,12 +11,19 @@ HardwareSerial SerialCom(PA10, PA9);
 
 // LimitSwitch limitSwitch(PB4);
 // ProximitySensor proximitySensor(PB5);
-MotorDriver motor1(PA2, PA3); //Left Pin, Right Pin
-MotorDriver motor2(PB8, PB9); //Left Pin, Right Pin
-Encoder encoder(PB6, PB7, 2, TIM3); // A 2 Hz RPMS calculation interval produced the best results.
+// LimitSwitch limitSwitch(PB4);
+// ProximitySensor proximitySensor(PB5);
+MotorDriver mob_motor1(PA6, PA7); //Left Pin, Right Pin
+MotorDriver mob_motor2(PB0, PB1); //Left Pin, Right Pin
+MotorDriver brush_motor(PA2, PA3); //Left Pin, Right Pin
+
+Encoder encoder(PB6, NULL, 2, TIM3); // A 2 Hz RPMS calculation interval produced the best results.
+Encoder encoder(PB7, NULL, 2, TIM3); // A 2 Hz RPMS calculation interval produced the best results.
 
 float mob1_speed = 0.0f;
 float mob2_speed = 0.0f;
+float brush_speed = 0.0f;
+
 float velocity_2 = 0.0f;
 uint32_t n = 0; // For averaging velocity.
 uint32_t n_print = 0;
@@ -50,6 +57,7 @@ void loop()
   
   // SerialCom.print("Proximity Sensor State ");
   // SerialCom.println(proximitySensor.state);  
+
   velocity_2 += encoder.velocity;
   n++;
 
