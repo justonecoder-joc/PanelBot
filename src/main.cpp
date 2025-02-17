@@ -54,16 +54,16 @@ void setup()
 
 void loop()
 {
-    uint32_t cuurent_time = millis() :
+    uint32_t cuurent_time = millis();
 
-                                       // CHECKING PROXIMITY
+    // CHECKING PROXIMITY
 
-                                       if (proximitySensor1.state == 0)
+    if (proximitySensor1.sense == LOW)
     {
         SerialCom.println("Warning: Proximity sensor 1 is not working. System remains stopped") return;
     }
 
-    if (proximitySensor2.state == 0)
+    if (proximitySensor2.sense == LOW)
     {
         SerialCom.println("Warning: Proximity sensor 2 is not working. System remains stopped") return;
     }
@@ -103,54 +103,101 @@ void loop()
 
         if ((limitSwitch1.sense() == HIGH) || (proximitySensor1.sense() == HIGH))
         {
-            mob_motor1.stop();
-            mob_motor2.stop();
+            mob_motor1.set_speed(0);
+            mob_motor2.set_speed(0);
             brush_motor.stop();
             break;
         }
     }
 
-    //   // limitSwitch.sense();
-    //   // proximitySensor.sense();
+    // BI DRECTIONAL MODE CHECK
 
-    //   uint32_t current_time = millis();
+    if (bidirectional_mode)
+    {
+        direction_movement = !direction_movement; // After reaching the end of its path, the robot will reverse direction on the next run instead of stopping.
+    }
 
-    //   // Check if proximity sensors are working
-    //   if (!proximitySensor1.isWorking())
-    //   {
-    //       SerialCom.println("Warning: Sensor I1 not working. System remains stopped.");
-    //       return;
-    //   }
+    // REVERSE MOVEMENT
+    if (proximitySensor2.sense() == LOW)
+    {
+        SerialCom.println("Warning: Sensor I2 not working. System remains stopped.");
+        return;
+    }
 
-    //   if (!proximitySensor2.isWorking())
-    //   {
-    //       SerialCom.println("Warning: Sensor I2 not working. System remains stopped.");
-    //       return;
-    //   }
+    mob_motor1.set_speed(mob1_speed);
+    mob_motor2.set_speed(mob2_speed);
+    encoder1.reset();
+    encoder2.reset();
 
-    //   // Print with a delay of 500 ms.
-    //   if ((current_time - time_stamp) > 500)
-    //   {
-    //     SerialCom.print("PID output: ");
-    //     SerialCom.println(mob2_speed);
+    while (true)
+    {
+        float distance = (encoder1.getDistance() + encoder2.getDistance()) / 2.0;
 
-    //     SerialCom.print("RPM: ");
-    //     SerialCom.println(encoder1.rpm);
+        if (distance > WIDTH_THRESHOLD)
+        {
+            valve2.turnOn();            // Start water
+            brush_motor.set_speed(255); // Start brush
+        }
 
-    //     SerialCom.print("Average Velocity: ");
-    //     SerialCom.println(encoder1.velocity);
-    //   }
+        if (distance >= DISTANCE_THRESHOLD)
+        {
+            valve2.turnOff();
+            brush_motor.set_speed(0); // Stop brush
+        }
 
-    //   if ((current_time - time_stamp) > 50)
-    //   {
-    //     mob1_speed = pid_mob1.calculate(0.14, encoder1.velocity, delta_time);
-    //     mob2_speed = pid_mob2.calculate(0.14, encoder2.velocity, delta_time);
+        if ((limitSwitch2.sense() == HIGH) || (proximitySensor2.sense() == HIGH))
+        {
+            mob_motor1.set_speed(0);
+            mob_motor2.set_speed(0);
+            brush_motor.set_speed(0);
+            break;
+        }
+    }
 
-    //     mob_motor1.set_speed(mob1_speed);
-    //     mob_motor2.set_speed(mob2_speed);
+    SerialCom.println("System shutting down.");
+}
 
-    //     time_stamp = current_time;
-    //   }
+//   // limitSwitch.sense();
+//   // proximitySensor.sense();
 
-    //   delay(10);
+//   uint32_t current_time = millis();
+
+//   // Check if proximity sensors are working
+//   if (!proximitySensor1.isWorking())
+//   {
+//       SerialCom.println("Warning: Sensor I1 not working. System remains stopped.");
+//       return;
+//   }
+
+//   if (!proximitySensor2.isWorking())
+//   {
+//       SerialCom.println("Warning: Sensor I2 not working. System remains stopped.");
+//       return;
+//   }
+
+//   // Print with a delay of 500 ms.
+//   if ((current_time - time_stamp) > 500)
+//   {
+//     SerialCom.print("PID output: ");
+//     SerialCom.println(mob2_speed);
+
+//     SerialCom.print("RPM: ");
+//     SerialCom.println(encoder1.rpm);
+
+//     SerialCom.print("Average Velocity: ");
+//     SerialCom.println(encoder1.velocity);
+//   }
+
+//   if ((current_time - time_stamp) > 50)
+//   {
+//     mob1_speed = pid_mob1.calculate(0.14, encoder1.velocity, delta_time);
+//     mob2_speed = pid_mob2.calculate(0.14, encoder2.velocity, delta_time);
+
+//     mob_motor1.set_speed(mob1_speed);
+//     mob_motor2.set_speed(mob2_speed);
+
+//     time_stamp = current_time;
+//   }
+
+//   delay(10);
 }
