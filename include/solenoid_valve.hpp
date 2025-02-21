@@ -2,7 +2,7 @@
 #include <Arduino.h>
 #include "stdint.h"
 
-enum ValveState {OFF, ON};
+enum ValveState {ON, OFF}; // Low turns on, High turns off.
 
 class SolenoidValve
 {
@@ -11,8 +11,8 @@ class SolenoidValve
         void turnOn();
         void turnOff();
         ValveState getState();
-    
-    private:
+        
+        private:
         uint8_t pin_i;
         ValveState state;
 };

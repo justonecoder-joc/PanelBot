@@ -19,8 +19,8 @@ LimitSwitch limitSwitch2(PB11);
 ProximitySensor proximitySensor1(PB4);
 ProximitySensor proximitySensor2(PB5);
 
-Encoder encoder1(PB6, NULL, 2, TIM3); // A 2 Hz RPMS calculation interval produced the best results.
-Encoder encoder2(PB7, NULL, 2, TIM4); // A 2 Hz RPMS calculation interval produced the best results.
+Encoder encoder1(PB6, PB7, 10, TIM3); // A 2 Hz RPMS calculation interval produced the best results.
+// Encoder encoder2(PB7, NULL, 2, TIM4); // A 2 Hz RPMS calculation interval produced the best results.
 
 SolenoidValve valve1(PB3);
 SolenoidValve valve2(PA15);
@@ -52,32 +52,40 @@ void loop()
   
   // limitSwitch.sense();
   // proximitySensor.sense();
+  valve1.turnOn();
+  SerialCom.print("Valve state");
+  SerialCom.println(valve1.getState());
+  delay(1000);
+  valve1.turnOff();
+  SerialCom.print("Valve state");
+  SerialCom.println(valve1.getState());
+  delay(1000);
+
+  // uint32_t current_time = millis();
+
+  // // Print with a delay of 500 ms.
+  // if ((current_time - time_stamp) > 500)
+  // {
+  //   SerialCom.print("PID output: ");
+  //   SerialCom.println(mob2_speed);  
+    
+  //   SerialCom.print("RPM: ");
+  //   SerialCom.println(encoder1.rpm);
   
-  uint32_t current_time = millis();
+  //   SerialCom.print("Average Velocity: ");
+  //   SerialCom.println(encoder1.velocity);
+  // }
 
-  // Print with a delay of 500 ms.
-  if ((current_time - time_stamp) > 500)
-  {
-    SerialCom.print("PID output: ");
-    SerialCom.println(mob2_speed);  
+  // if ((current_time - time_stamp) > 50)
+  // {
+  //   mob1_speed = pid_mob1.calculate(0.14, encoder1.velocity, delta_time);
+  //   mob2_speed = pid_mob2.calculate(0.14, encoder2.velocity, delta_time);
     
-    SerialCom.print("RPM: ");
-    SerialCom.println(encoder1.rpm);
-  
-    SerialCom.print("Average Velocity: ");
-    SerialCom.println(encoder1.velocity);
-  }
+  //   mob_motor1.set_speed(mob1_speed);
+  //   mob_motor2.set_speed(mob2_speed);
+    
+  //   time_stamp = current_time;
+  // }
 
-  if ((current_time - time_stamp) > 50)
-  {
-    mob1_speed = pid_mob1.calculate(0.14, encoder1.velocity, delta_time);
-    mob2_speed = pid_mob2.calculate(0.14, encoder2.velocity, delta_time);
-    
-    mob_motor1.set_speed(mob1_speed);
-    mob_motor2.set_speed(mob2_speed);
-    
-    time_stamp = current_time;
-  }
-
-  delay(10);
+  // delay(10);
 }
