@@ -2,12 +2,16 @@
 
 #include <Arduino.h>
 #include <stdint.h>
+#include <HardwareSerial.h>
+
+extern HardwareSerial SerialCom;
 
 class Encoder
 {
     public:
-        Encoder(uint8_t CLK_pin, uint8_t SW_pin, uint32_t timer_frequency = 10,  TIM_TypeDef *timer = TIM2);
+        Encoder(uint8_t tick_pin, uint32_t timer_frequency = 10,  TIM_TypeDef *timer = TIM2);
         ~Encoder();
+        
         
         static Encoder *instance; // Needs to be public for definition/initialization in global scope.
         float rpm = 0;
@@ -22,15 +26,14 @@ class Encoder
         static void TimerISR();
         void handleTimerISR(); // Update rpm.
 
-        static void FallingEdgeISR();  // Static ISR function for falling edge interrupt
-        void handleFallingEdge();  // Non-static function for handling falling edge
+        static void RisingEdgeISR();  // Static ISR function for falling edge interrupt
+        void handleRisingEdge();  // Non-static function for handling falling edge
 
         HardwareTimer *interval_timer;
 
 
         float timer_f;
         uint32_t tick_timestamp = 0; // timestamp for debouncing ticks.
-        uint32_t prev_ticks = 0;
-        uint8_t CLK_pin_i;
+        uint8_t tick_pin_i;
         uint8_t SW_pin_i;
 };
