@@ -8,7 +8,7 @@
 #include "PID.hpp"
 #include "solenoid_valve.hpp"
 
-#define UPDATE_FREQ 2 // microseconds.
+#define UPDATE_TIME_MS 100 // microseconds.
 
 HardwareSerial SerialCom(PA10, PA9);
 
@@ -22,7 +22,7 @@ ProximitySensor proximitySensor1(PB4);
 ProximitySensor proximitySensor2(PB5);
 
 
-Encoder encoder1(PB6, UPDATE_FREQ, TIM2); // A 2 Hz RPMS calculation interval produced the best results.
+Encoder encoder1(PB6, UPDATE_TIME_MS); // A 2 Hz RPMS calculation interval produced the best results.
 // Encoder encoder2(PB7, NULL, 2, TIM4); // A 2 Hz RPMS calculation interval produced the best results.
 
 SolenoidValve valve1(PB3);
@@ -57,7 +57,7 @@ void setup()
 
 void loop()
 {
-
+  encoder1.update();
 //   Serial.println(encoder1.rpm)
 //   // limitSwitch.sense();
 //   // proximitySensor.sense();

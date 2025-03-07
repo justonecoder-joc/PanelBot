@@ -3,42 +3,35 @@
 Encoder* Encoder::instance = nullptr; // Static members need to be defined outside of the class definition.
                                       // They can only be declared inside the class.
 
-Encoder::Encoder(uint8_t tick_pin, uint32_t timer_frequency,  TIM_TypeDef *timer)
+Encoder::Encoder(uint8_t tick_pin, uint32_t update_time_ms)
 {
     Encoder::instance = this;
 
     tick_pin_i = tick_pin;
-    timer_f = timer_frequency;
+    update_time_s_i = update_time_ms;
 
     pinMode(tick_pin_i, INPUT_PULLUP);
-
-    interval_timer = new HardwareTimer(timer); // The timer that we will use for rpm calculation intervals.
-
-    interval_timer->setOverflow(timer_frequency, HERTZ_FORMAT);  // Set frequency to 10 Hz (100 ms interval)
-    interval_timer->attachInterrupt(Encoder::TimerISR); // Attach timer interrupt handler
-    interval_timer->resume();                   // Start the timer
-
     attachInterrupt(digitalPinToInterrupt(tick_pin_i), Encoder::RisingEdgeISR, RISING); // Rising-edge interrupts for the tick pin.
+    p_time = millis();
 }
 
-void Encoder::TimerISR()
+void Encoder::update()
 {
-    if (Encoder::instance)
+    c_time = millis();
+    if ((c_time - p_time) > update_time_s_i)
     {
-        Encoder::instance->handleTimerISR();
+        rpm = float(ticks / 64.0f) / float(update_time_s_i / 1000) * 60; // 20 ticks = 1 revolution.
+        velocity = rpm / 60 * 2 * 3.142f * 0.0381f;
+        SerialCom.print("RPM = ");
+        SerialCom.print(rpm);
+        SerialCom.print(", Velocity = ");
+        SerialCom.print(velocity);
+        SerialCom.print(", ticks = ");
+        SerialCom.println(ticks);
+
+        ticks = 0;
+        p_time = c_time; // Because ticks may still be read when calulations are being performed.
     }
-}
-
-void Encoder::handleTimerISR()
-{
-    rpm = float(ticks * timer_f) / 64.0f * 60; // 20 ticks = 1 revolution.
-    // velocity = rpm / 60 * 2 * 3.142f * 0.0381f;
-    SerialCom.print("RPM = ");
-    SerialCom.print(rpm);
-    SerialCom.print(", ticks = ");
-    SerialCom.println(ticks);
-
-    ticks = 0;
 }
 
 // Static ISR function called on falling edge or tick_pin_i
@@ -63,10 +56,4 @@ void Encoder::handleRisingEdge()
     // tick_timestamp = timestamp;
     this->ticks++;
     // }
-}
-
-Encoder::~Encoder()
-{
-    interval_timer->pause();
-    delete interval_timer;
 }
