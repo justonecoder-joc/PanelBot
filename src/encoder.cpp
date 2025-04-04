@@ -8,26 +8,26 @@ Encoder::Encoder(uint8_t tick_pin, uint32_t update_time_ms)
     Encoder::instance = this;
 
     tick_pin_i = tick_pin;
-    update_time_s_i = update_time_ms;
+    update_time_ms_i = update_time_ms;
 
     pinMode(tick_pin_i, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(tick_pin_i), Encoder::RisingEdgeISR, RISING); // Rising-edge interrupts for the tick pin.
     p_time = millis();
 }
 
-void Encoder::update()
+void Encoder::update(uint32_t time_stamp)
 {
-    c_time = millis();
-    if ((c_time - p_time) > update_time_s_i)
+    c_time = time_stamp;
+    if ((c_time - p_time) > update_time_ms_i)
     {
-        rpm = float(ticks / 64.0f) / float(update_time_s_i / 1000) * 60; // 20 ticks = 1 revolution.
-        velocity = rpm / 60 * 2 * 3.142f * 0.0381f;
-        SerialCom.print("RPM = ");
-        SerialCom.print(rpm);
-        SerialCom.print(", Velocity = ");
-        SerialCom.print(velocity);
-        SerialCom.print(", ticks = ");
-        SerialCom.println(ticks);
+        rpm = float(ticks / 64.0f) * 60000 / update_time_ms_i; // 20 ticks = 1 revolution.
+        velocity = rpm / 60 * 2 * PI * 0.0381f;
+        // SerialCom.print("RPM = ");
+        // SerialCom.print(rpm);
+        // SerialCom.print(", Velocity = ");
+        // SerialCom.print(velocity);
+        // SerialCom.print(", ticks = ");
+        // SerialCom.println(ticks);
 
         ticks = 0;
         p_time = c_time; // Because ticks may still be read when calulations are being performed.

@@ -10,7 +10,7 @@ class Encoder
 {
     public:
         Encoder(uint8_t tick_pin, uint32_t update_time);
-        void update();
+        void update(uint32_t time_stamp);
         
         
         static Encoder *instance; // Needs to be public for definition/initialization in global scope.
@@ -27,7 +27,7 @@ class Encoder
         static void RisingEdgeISR();  // Static ISR function for falling edge interrupt
         void handleRisingEdge();  // Non-static function for handling falling edge
 
-        float update_time_s_i;
+        float update_time_ms_i;
         uint32_t c_time = 0; // timestamp for rpm calculations.
         uint32_t p_time = 0; // timestamp for debouncing ticks.
         uint8_t tick_pin_i;
