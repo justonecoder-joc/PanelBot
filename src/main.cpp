@@ -29,7 +29,7 @@ LimitSwitch limitSwitch2(PB11);
 ProximitySensor proximitySensor1(PB4);
 ProximitySensor proximitySensor2(PB5);
 
-Encoder encoder1(PB6, 100); // A 2 Hz RPMS calculation interval produced the best results.
+Encoder encoder1(PB7, UPDATE_TIME_MS); // A 2 Hz RPMS calculation interval produced the best results.
 // Encoder encoder2(PB7, UPDATE_TIME_MS); // A 2 Hz RPMS calculation interval produced the best results.
 
 SolenoidValve valve1(PB3);
@@ -55,8 +55,9 @@ void setup()
 {
     SerialCom.begin(115200);
     // brush_motor.set_direction(Forward); // Backward == Right
-    mob_motor1.set_direction(Forward);  // Forward == Left
-    mob_motor2.set_direction(Forward); // Backward == Right
+    mob_motor1.set_direction(Backward);  // Forward == Left
+    // mob_motor2.set_direction(Forward); // Backward == Right
+    mob_motor1.set_speed(0.99);
     prev_time = millis();
 }
 
@@ -67,32 +68,32 @@ void loop()
   // encoder2.update(time_stamp);
   
 
-  mob_motor1.set_speed(0.5);
+  
 
-  if (count == 1)
-  {
-    SerialCom.print("Encoder 1 Velocity: ");
-    SerialCom.print(encoder1.velocity);
-    SerialCom.print(", RPM = ");
-    SerialCom.print(encoder1.rpm);
-    SerialCom.print(", ticks = ");
-    SerialCom.println(encoder1.ticks);
-    // SerialCom.print("Encoder 2 Velocity: ");
-    // SerialCom.println(encoder2.velocity);
-    count = 0;
-  }
+  // if (count == 1)
+  // {
+  //   SerialCom.print("Encoder 1 Velocity: ");
+  //   SerialCom.print(encoder1.velocity);
+  //   SerialCom.print(", RPM = ");
+  //   SerialCom.print(encoder1.rpm);
+  //   SerialCom.print(", ticks = ");
+  //   SerialCom.println(encoder1.ticks);
+  //   // SerialCom.print("Encoder 2 Velocity: ");
+  //   // SerialCom.println(encoder2.velocity);
+  //   count = 0;
+  // }
 
-  if ((time_stamp - prev_time) > delta_time_ms)
-  {
+  // if ((time_stamp - prev_time) > delta_time_ms)
+  // {
   // //   mob1_speed = pid_mob1.calculate(0.14, encoder1.velocity, float(delta_time_ms)/1000);
   // //   mob2_speed = pid_mob2.calculate(0.14, encoder2.velocity, float(delta_time_ms)/1000);
     
   // //   mob_motor1.set_speed(mob1_speed);
   // //   mob_motor2.set_speed(mob2_speed);
     
-    prev_time = time_stamp;
-    count++;
-  }
+  //   prev_time = time_stamp;
+  //   count++;
+  // }
 
 //   Serial.println(encoder1.rpm)
 //   // limitSwitch.sense();

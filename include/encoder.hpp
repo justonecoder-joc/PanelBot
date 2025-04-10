@@ -24,9 +24,12 @@ class Encoder
     // However, being a static function means that it cannot access "instance variables" using "this" pointer.
     // But, to mitigate this, the instance member that needs to be accessed can be declared as static as well.
 
-        static void RisingEdgeISR();  // Static ISR function for falling edge interrupt
-        void handleRisingEdge();  // Non-static function for handling falling edge
-
+        static void FallingEdgeISR();  // Static ISR function for falling edge interrupt
+        void handleFallingEdge();  // Non-static function for handling falling edge
+        void bubble_sort(float arr[], int n);
+        
+        uint32_t read_count = 0;
+        float rpm_arr[8];
         float update_time_ms_i;
         uint32_t c_time = 0; // timestamp for rpm calculations.
         uint32_t p_time = 0; // timestamp for debouncing ticks.
